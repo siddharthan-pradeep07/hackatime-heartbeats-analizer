@@ -5,10 +5,11 @@
 // <body> wrapper. That shape is what Claude's Artifact tool expects when
 // publishing a static single-page app as a shareable preview.
 //
-// The Artifact sandbox's CSP blocks cross-origin font fetches, so the
-// Phantom Sans @font-face rules are rewritten here to embed the woff2 files
-// (fetched fresh from Hack Club's CDN) as base64 data: URIs — the .woff
-// fallback lines are left pointing at the CDN, unused by any modern browser.
+// The Artifact sandbox's CSP blocks cross-origin font and image fetches, so
+// the Phantom Sans @font-face rules and the top-right Hack Club banner are
+// rewritten here to embed the actual files (fetched fresh from Hack Club's
+// CDN) as base64 data: URIs — the .woff fallback lines are left pointing at
+// the CDN, unused by any modern browser.
 //
 // Run `npm run build` first, then `node scripts/build-artifact.mjs`.
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
@@ -32,6 +33,27 @@ let css = readFileSync(join(assetsDir, cssFile), "utf8");
 const logoSvg = readFileSync(join("dist", "hack-club-icon.svg"), "utf8");
 const logoDataUri = `data:image/svg+xml;base64,${Buffer.from(logoSvg).toString("base64")}`;
 js = js.split("/hack-club-icon.svg").join(logoDataUri);
+
+// The top-right Hack Club year banner is built from a template literal
+// (`https://assets.hackclub.com/banners/${year}.svg`) rather than a fixed
+// string, so it can't be inlined with a plain .split().join() the way the
+// logo is — fetch this year's banner and replace the whole template literal
+// with a quoted data: URI string.
+const bannerYear = new Date().getFullYear();
+const bannerUrl = `https://assets.hackclub.com/banners/${bannerYear}.svg`;
+const bannerRes = await fetch(bannerUrl);
+if (bannerRes.ok) {
+  const bannerSvg = Buffer.from(await bannerRes.arrayBuffer());
+  const bannerDataUri = `data:image/svg+xml;base64,${bannerSvg.toString("base64")}`;
+  const bannerTemplatePattern = /`https:\/\/assets\.hackclub\.com\/banners\/\$\{[^}]+\}\.svg`/;
+  if (bannerTemplatePattern.test(js)) {
+    js = js.replace(bannerTemplatePattern, JSON.stringify(bannerDataUri));
+  } else {
+    console.error("Could not find the banner template literal in the bundle to inline — check HackClubBanner.tsx still matches this pattern.");
+  }
+} else {
+  console.error(`Could not fetch ${bannerUrl} (${bannerRes.status}) — leaving the banner as an external reference.`);
+}
 
 // Same problem for the Phantom Sans webfonts: fetch each woff2 and inline it.
 const FONT_BASE = "https://assets.hackclub.com/fonts/Phantom_Sans_0.7/";

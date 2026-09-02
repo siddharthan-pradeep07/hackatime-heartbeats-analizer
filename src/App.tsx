@@ -10,6 +10,7 @@ import { Meter } from "./components/charts/Meter";
 import { PulseStrip } from "./components/charts/PulseStrip";
 import { DataTable } from "./components/DataTable";
 import { AuthenticityCard } from "./components/AuthenticityCard";
+import { HackClubBanner } from "./components/HackClubBanner";
 import { Footer } from "./components/Footer";
 import { TooltipProvider } from "./components/charts/Tooltip";
 import { normalizeHeartbeats } from "./lib/normalize";
@@ -75,6 +76,7 @@ export default function App() {
 
   return (
     <TooltipProvider>
+      <HackClubBanner />
       <div className="app">
         <div className="shell">
           <Header meta={meta} heartbeatCount={heartbeats.length} spanSeconds={spanSeconds} />

@@ -90,8 +90,8 @@
     --ink-soft:   #c2c8d1;
     --muted:      var(--hc-muted);
     --line:       rgba(255, 255, 255, 0.10);
-    --border:     rgba(255, 255, 255, 0.10);
-    --shadow:     0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 28px -16px rgba(0, 0, 0, 0.7);
+    --border:     rgba(245, 236, 236, 0.73);
+    --shadow:     0 1px 2px rgba(0, 0, 0, 0), 0 8px 28px -16px rgba(0, 0, 0, 0.7);
 
     --pulse-soft:  #3a1a20;
     --pulse-track: #4a1e28;
@@ -107,7 +107,7 @@
   --ink-soft:   #c2c8d1;
   --muted:      var(--hc-muted);
   --line:       rgba(255, 255, 255, 0.10);
-  --border:     rgba(255, 255, 255, 0.10);
+  --border:     rgb(213, 203, 203);
   --shadow:     0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 28px -16px rgba(0, 0, 0, 0.7);
 
   --pulse-soft:  #3a1a20;
@@ -129,8 +129,16 @@ h1, h2, h3 { font-family: "Phantom Sans", system-ui, sans-serif; font-weight: 70
 button { font: inherit; }
 :focus-visible { outline: 2px solid var(--pulse); outline-offset: 2px; }
 
-.app { padding: 28px 20px 64px; }
+.app { padding: 88px 20px 64px; }
 .shell { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+
+/* ---- Hack Club banner ---- */
+/* hackclub.com/banner, pinned top-left. .app's top padding is sized to clear
+   it at every width, so it never overlaps the header instead of only avoiding
+   collision at some viewport widths and not others. */
+.hc-banner { position: fixed; top: 0; left: 0; z-index: 500; width: 160px; line-height: 0; }
+.hc-banner img { display: block; width: 100%; height: auto; }
+@media (max-width: 640px) { .hc-banner { width: 108px; } .app { padding-top: 64px; } }
 
 /* ---- Header ---- */
 .topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-bottom: 4px; }
