@@ -13,7 +13,6 @@ import { AuthenticityCard } from "./components/AuthenticityCard";
 import { Footer } from "./components/Footer";
 import { TooltipProvider } from "./components/charts/Tooltip";
 import { normalizeHeartbeats } from "./lib/normalize";
-import { SAMPLE_RAW } from "./lib/sampleData";
 import { fmtDuration } from "./lib/format";
 import { breakdownRows, useHeartbeatStats, type BreakdownRow, type BucketRow, type SessionRow } from "./hooks/useHeartbeatStats";
 import type { DatasetMeta, FileStat, Heartbeat, TableColumn } from "./types";
@@ -50,19 +49,10 @@ function breakdownColumns(nameLabel: string): TableColumn<BreakdownRow>[] {
   ];
 }
 
-function loadInitial(): { heartbeats: Heartbeat[]; meta: DatasetMeta; error: string | null } {
-  try {
-    return { heartbeats: normalizeHeartbeats(SAMPLE_RAW), meta: { source: "sample", name: "sample-01.json (sample)" }, error: null };
-  } catch (e) {
-    return { heartbeats: [], meta: { source: "sample", name: "No data loaded" }, error: (e as Error).message };
-  }
-}
-
 export default function App() {
-  const [initial] = useState(loadInitial);
-  const [heartbeats, setHeartbeats] = useState<Heartbeat[]>(initial.heartbeats);
-  const [meta, setMeta] = useState<DatasetMeta>(initial.meta);
-  const [error, setError] = useState<string | null>(initial.error);
+  const [heartbeats, setHeartbeats] = useState<Heartbeat[]>([]);
+  const [meta, setMeta] = useState<DatasetMeta | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [thresholdSec, setThresholdSec] = useState(300);
 
   const handleLoad = useCallback((raw: unknown, nextMeta: DatasetMeta) => {
@@ -170,6 +160,16 @@ export default function App() {
 
               <p className="note">{stats.sourceTypeNote}</p>
             </>
+          )}
+
+          {!stats && (
+            <section className="card empty-state">
+              <p className="empty-state-title">No data loaded yet</p>
+              <p className="empty-state-body">
+                Upload a Hackatime/WakaTime heartbeats export, paste one as JSON, or fetch it from a URL above — stats,
+                charts, and the authenticity check appear here once a file is loaded.
+              </p>
+            </section>
           )}
 
           <Footer />

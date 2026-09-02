@@ -13,7 +13,7 @@ export interface Heartbeat {
 }
 
 /** Where the currently-loaded dataset came from. */
-export type DataSource = "sample" | "file" | "paste" | "url";
+export type DataSource = "file" | "paste" | "url";
 
 export interface DatasetMeta {
   source: DataSource;

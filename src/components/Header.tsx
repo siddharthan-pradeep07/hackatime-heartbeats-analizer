@@ -2,7 +2,7 @@ import { fmtDuration } from "../lib/format";
 import type { DatasetMeta } from "../types";
 
 interface HeaderProps {
-  meta: DatasetMeta;
+  meta: DatasetMeta | null;
   heartbeatCount: number;
   spanSeconds: number;
 }
@@ -20,7 +20,13 @@ export function Header({ meta, heartbeatCount, spanSeconds }: HeaderProps) {
       <div className="source-status">
         <span className="pulse-dot" />
         <span>
-          {meta.name} · {heartbeatCount.toLocaleString()} heartbeats · {fmtDuration(spanSeconds)} span
+          {meta ? (
+            <>
+              {meta.name} · {heartbeatCount.toLocaleString()} heartbeats · {fmtDuration(spanSeconds)} span
+            </>
+          ) : (
+            "No data loaded yet"
+          )}
         </span>
       </div>
     </header>

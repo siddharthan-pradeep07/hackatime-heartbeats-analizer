@@ -1,8 +1,7 @@
 import { useState, type DragEvent } from "react";
 import type { DatasetMeta } from "../types";
-import { SAMPLE_RAW } from "../lib/sampleData";
 
-type Tab = "sample" | "file" | "paste" | "url";
+type Tab = "file" | "paste" | "url";
 
 interface IntakePanelProps {
   onLoad: (raw: unknown, meta: DatasetMeta) => void;
@@ -11,14 +10,13 @@ interface IntakePanelProps {
 }
 
 const TABS: Array<[Tab, string]> = [
-  ["sample", "Sample data"],
   ["file", "Upload file"],
   ["paste", "Paste JSON"],
   ["url", "Fetch URL"],
 ];
 
 export function IntakePanel({ onLoad, onError, error }: IntakePanelProps) {
-  const [tab, setTab] = useState<Tab>("sample");
+  const [tab, setTab] = useState<Tab>("file");
   const [dragOver, setDragOver] = useState(false);
   const [pasteValue, setPasteValue] = useState("");
   const [url, setUrl] = useState("");
@@ -85,21 +83,6 @@ export function IntakePanel({ onLoad, onError, error }: IntakePanelProps) {
           </button>
         ))}
       </div>
-
-      {tab === "sample" && (
-        <div>
-          <p className="hint" style={{ marginTop: 0 }}>
-            Loaded below: a 299-heartbeat sample session spanning ~14.5 hours across three editors. Swap in your own export any time.
-          </p>
-          <button
-            type="button"
-            className="btn accent"
-            onClick={() => onLoad(SAMPLE_RAW, { source: "sample", name: "sample-01.json (sample)" })}
-          >
-            Reload sample-01.json
-          </button>
-        </div>
-      )}
 
       {tab === "file" && (
         <div>

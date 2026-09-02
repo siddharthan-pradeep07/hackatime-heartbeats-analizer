@@ -39,7 +39,7 @@ src/
     stats.ts          # the analytics core: durations, sessions, buckets, file stats
     format.ts         # duration/clock/number formatting
     palette.ts         # the 7-slot categorical color assignment
-    sampleData.ts       # the bundled 299-heartbeat sample dataset
+    authenticity.ts      # heuristic timing/write-integrity signals + verdict
   hooks/
     useHeartbeatStats.ts # memoized derivation of every KPI/chart/table from the
                           # loaded heartbeats + the idle-threshold setting
@@ -47,7 +47,7 @@ src/
     charts/            # BarList, StackedBar, Meter, PulseStrip, and the shared Tooltip
     ChartCard.tsx        # figure/figcaption shell + "View as table" toggle
     DataTable.tsx         # generic table with a show-more affordance
-    IntakePanel.tsx        # sample / upload / paste / fetch-URL tabs
+    IntakePanel.tsx        # upload / paste / fetch-URL tabs
     FiltersRow.tsx           # the idle-threshold control
   App.tsx                     # composes the page and owns top-level state
 scripts/
@@ -56,9 +56,9 @@ scripts/
 
 ## Loading data
 
-Four ways to get data in, all client-side:
+The app opens empty — no data is shown until you load a real export. Three ways
+to do that, all client-side:
 
-- **Sample data** — loaded by default (a 299-heartbeat session across three editors)
 - **Upload file** — drag a `.json` export onto the drop zone, or browse for one
 - **Paste JSON** — paste an export straight into a text box
 - **Fetch URL** — pull a JSON file from a URL that allows cross-origin requests
