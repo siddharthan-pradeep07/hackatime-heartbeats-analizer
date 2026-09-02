@@ -1,0 +1,18 @@
+node_modules
+dist
+dist-ssr
+*.local
+*.tsbuildinfo
+artifact-build.html
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
