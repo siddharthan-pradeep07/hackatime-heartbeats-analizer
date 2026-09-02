@@ -11,6 +11,7 @@ import {
   totalActiveSeconds,
 } from "../lib/stats";
 import { fmtDuration, fmtHMS, fmtClock, fmtCompact } from "../lib/format";
+import { computeAuthenticitySignals, type AuthenticitySignals } from "../lib/authenticity";
 import type { KpiTileData } from "../components/KpiGrid";
 
 export interface BucketRow extends Record<string, unknown> {
@@ -49,6 +50,7 @@ export interface HeartbeatStats {
   fileStats: ReturnType<typeof buildFileStats>;
   sessionRows: SessionRow[];
   sourceTypeNote: string;
+  authenticity: AuthenticitySignals;
 }
 
 const breakdownRows = (items: LabeledValue[]): BreakdownRow[] => items.map((i) => ({ label: i.label, active: fmtDuration(i.value) }));
@@ -131,6 +133,7 @@ export function useHeartbeatStats(heartbeats: Heartbeat[], thresholdSec: number)
     };
 
     const fileStats = buildFileStats(heartbeats, thresholdSec);
+    const authenticity = computeAuthenticitySignals(heartbeats, thresholdSec);
 
     const sessionRows: SessionRow[] = sessions.map((s, i) => {
       let lang = "—";
@@ -179,6 +182,7 @@ export function useHeartbeatStats(heartbeats: Heartbeat[], thresholdSec: number)
       fileStats,
       sessionRows,
       sourceTypeNote,
+      authenticity,
     };
   }, [heartbeats, thresholdSec]);
 }

@@ -9,6 +9,7 @@ import { StackedBar } from "./components/charts/StackedBar";
 import { Meter } from "./components/charts/Meter";
 import { PulseStrip } from "./components/charts/PulseStrip";
 import { DataTable } from "./components/DataTable";
+import { AuthenticityCard } from "./components/AuthenticityCard";
 import { Footer } from "./components/Footer";
 import { TooltipProvider } from "./components/charts/Tooltip";
 import { normalizeHeartbeats } from "./lib/normalize";
@@ -164,6 +165,8 @@ export default function App() {
                   <DataTable columns={SESSION_COLUMNS} rows={stats.sessionRows} limit={10} />
                 </ChartCard>
               </section>
+
+              <AuthenticityCard signals={stats.authenticity} />
 
               <p className="note">{stats.sourceTypeNote}</p>
             </>

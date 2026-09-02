@@ -82,27 +82,22 @@ missing/`null` fields all fall back sensibly.
   heartbeats, a ranked file table, and a session table.
 - Every chart has a "View as table" toggle for an accessible, non-visual
   equivalent of the same data.
+- **Authenticity check** (`src/lib/authenticity.ts`) — a heuristic read on whether
+  the logged hours look human-driven, based on two signals: how irregular the
+  gaps between heartbeats are (real activity is close to memoryless; a script
+  pinging on a fixed timer clusters tightly around one interval), and whether
+  frequently-written files ever actually gained lines. It escalates from "looks
+  genuine" to "worth a second look" to "automation signals found" only when
+  signals agree, and always shows the numbers behind the call — it's explicitly
+  not proof, just a starting point for manual review.
 
 ## Design notes
 
-- **Color** — the Hack Club brand palette (Red, Orange, Yellow, Green, Cyan,
-  Blue, Purple), reordered — not recolored — into the one sequence of those
-  seven hues that clears Anthropic's data-viz color-vision-deficiency and
-  normal-vision adjacency checks in both themes: Red, Cyan, Orange, Blue,
-  Yellow, Purple, Green. Hack Club Red doubles as the UI's primary accent in
-  both light and dark mode.
-- **Type** — Phantom Sans (Hack Club's brand typeface, self-hosted from
-  `assets.hackclub.com`) for headings and body text; the system monospace
-  stack for data.
-- **Shape** — theme.hackclub.com's radius and shadow scale (pill-shaped
-  buttons and tabs, 16px cards, button hover-scale) and its light/dark surface
-  colors, applied through the same token pattern (`prefers-color-scheme` by
-  default, overridable via a `data-theme` attribute on the root element).
-- **Logo** — the official Hack Club "flag" icon (`icon-rounded.svg` from
-  `hackclub.com/brand`), used unmodified per their usage guidance.
-- `npm run build:artifact` (or `node scripts/build-artifact.mjs` after a
-  build) produces a single self-contained HTML file — fonts and the logo
-  inlined as data URIs — suitable for a static host or a shareable preview.
+Follows Anthropic's data-visualization method: a fixed 8-hue categorical
+palette assigned in order (never cycled or re-assigned by rank), one hue for
+magnitude, hover tooltips plus keyboard-focus parity on every mark, and a
+light/dark theme pair driven entirely by CSS custom properties (`prefers-color-scheme`
+by default, overridable via a `data-theme` attribute on the root element).
 
 
 ---------------
@@ -111,5 +106,5 @@ Please note, this project was mostly vibe coded, and this doesn't potray my work
 
 ### Future improvements:
 
-- I'm planning on adding
+- I'm planning on adding more data visualization and a way to connect it directly to ysws (you ship - we ship) sites which are part of Hack Club.
 

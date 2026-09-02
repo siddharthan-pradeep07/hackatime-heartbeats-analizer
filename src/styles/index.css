@@ -253,6 +253,16 @@ tr:last-child td { border-bottom: none; }
 td.mono, th.mono { font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace; font-variant-numeric: tabular-nums; color: var(--ink); }
 .show-more { margin-top: 10px; background: none; border: none; color: var(--pulse); font-weight: 700; font-size: 0.8rem; cursor: pointer; padding: 0; }
 
+/* ---- Authenticity card ---- */
+.authenticity-card { border-color: var(--pulse); }
+.authenticity-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.authenticity-pill { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+.authenticity-headline { font-size: 1.05rem; }
+.authenticity-reasons { margin: 0 0 18px; padding-left: 20px; color: var(--ink-soft); font-size: 0.88rem; display: flex; flex-direction: column; gap: 6px; }
+.authenticity-evidence { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 760px) { .authenticity-evidence { grid-template-columns: 1fr; } }
+.authenticity-disclaimer { margin: 18px 0 0; font-size: 0.74rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
+
 .note { font-size: 0.78rem; color: var(--muted); text-align: center; }
 .foot { text-align: center; color: var(--muted); font-size: 0.78rem; padding-top: 8px; }
 .foot strong { color: var(--ink-soft); }
