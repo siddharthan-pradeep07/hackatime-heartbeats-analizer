@@ -52,6 +52,8 @@ src/
   App.tsx                     # composes the page and owns top-level state
 scripts/
   build-artifact.mjs            # inlines a production build into one shareable HTML file
+  eval-authenticity.mts          # dev-only harness: runs authenticity.ts against fixtures/ and prints the verdict + evidence for each
+  fixtures/                        # real and synthetic heartbeat logs used to calibrate authenticity.ts (gitignored)
 ```
 
 ## Loading data
@@ -83,13 +85,26 @@ missing/`null` fields all fall back sensibly.
 - Every chart has a "View as table" toggle for an accessible, non-visual
   equivalent of the same data.
 - **Authenticity check** (`src/lib/authenticity.ts`) — a heuristic read on whether
-  the logged hours look human-driven, based on two signals: how irregular the
-  gaps between heartbeats are (real activity is close to memoryless; a script
-  pinging on a fixed timer clusters tightly around one interval), and whether
-  frequently-written files ever actually gained lines. It escalates from "looks
-  genuine" to "worth a second look" to "automation signals found" only when
-  signals agree, and always shows the numbers behind the call — it's explicitly
-  not proof, just a starting point for manual review.
+  the logged hours look human-driven, based on three signals: how irregular the
+  *pacing* gaps between heartbeats are (real activity is close to memoryless; a
+  script pinging on a fixed timer clusters tightly around one interval);
+  whether frequently-written files ever actually gained lines; and whether any
+  file's reported line count swings by a large amount repeatedly within a
+  short window instead of trending toward a final size. Gaps of ≤2s are set
+  aside before the timing read, since AI coding agents (Claude, Cursor, etc.)
+  routinely touch a dozen files within the same second as one turn — that
+  burst rhythm, not the pacing between turns, is what would otherwise make a
+  legitimate agent-heavy session look like a fixed-interval script; a burst
+  that keeps re-hitting the *same* file instead of sweeping across many
+  doesn't get that benefit of the doubt. Deliberately tuned to lean sensitive:
+  a single file with even a couple of concrete markers is named directly in a
+  "flagged files" list with its own plain-language reason, rather than
+  waiting for a large share of the whole session to look suspicious before
+  saying anything — every claim is checkable against the exact numbers shown
+  alongside it. It's explicitly not proof, just a starting point for manual
+  review of the files it names. `scripts/eval-authenticity.mts` runs it
+  against real and synthetic fixtures in `scripts/fixtures/` (gitignored —
+  real heartbeat data) for calibration; run it with `npm run eval:authenticity`.
 
 ## Design notes
 

@@ -12,6 +12,9 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    // @types/node is installed for scripts/ (see tsconfig.scripts.json) — keep its
+    // ambient Node.js globals (process, Buffer, require, …) out of browser app code.
+    "types": [],
 
     "strict": true,
     "noUnusedLocals": true,
