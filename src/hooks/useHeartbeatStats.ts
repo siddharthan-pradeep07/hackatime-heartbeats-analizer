@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import type { Heartbeat, LabeledValue } from "../types";
+import type { DayBucket, Heartbeat, LabeledValue } from "../types";
 import { buildEditorLabelMap, editorGroupKey } from "../lib/normalize";
 import {
   buildBuckets,
+  buildDailyBuckets,
   buildFileStats,
   buildSessions,
   computeLinesAdded,
@@ -16,6 +17,12 @@ import type { KpiTileData } from "../components/KpiGrid";
 
 export interface BucketRow extends Record<string, unknown> {
   range: string;
+  active: string;
+  count: number;
+}
+
+export interface DailyBucketRow extends Record<string, unknown> {
+  day: string;
   active: string;
   count: number;
 }
@@ -40,6 +47,8 @@ export interface HeartbeatStats {
   noActivityWarning: boolean;
   buckets: ReturnType<typeof buildBuckets>["buckets"];
   bucketRows: BucketRow[];
+  dailyBuckets: DayBucket[];
+  dailyBucketRows: DailyBucketRow[];
   langItems: LabeledValue[];
   editorItems: LabeledValue[];
   projectItems: LabeledValue[];
@@ -88,9 +97,24 @@ export function useHeartbeatStats(heartbeats: Heartbeat[], thresholdSec: number)
       { label: "Lines added (est.)", value: fmtCompact(linesAdded) },
     ];
 
+    // Not part of the standard Hackatime/WakaTime heartbeat format — only shown
+    // when the loaded export actually carries a `clicks` field, never invented.
+    const heartbeatsWithClicks = heartbeats.filter((h) => h.clicks != null);
+    if (heartbeatsWithClicks.length > 0) {
+      const totalClicks = heartbeatsWithClicks.reduce((sum, h) => sum + (h.clicks ?? 0), 0);
+      kpis.push({ label: "Mouse clicks", value: totalClicks.toLocaleString(), sub: `across ${heartbeatsWithClicks.length.toLocaleString()} heartbeats` });
+    }
+
     const { buckets, bucketSeconds } = buildBuckets(heartbeats, thresholdSec);
     const bucketRows: BucketRow[] = buckets.map((b) => ({
       range: `${fmtClock(b.startT)}–${fmtClock(b.startT + bucketSeconds)}`,
+      active: fmtDuration(b.activeSeconds),
+      count: b.count,
+    }));
+
+    const dailyBuckets = buildDailyBuckets(heartbeats, thresholdSec);
+    const dailyBucketRows: DailyBucketRow[] = dailyBuckets.map((b) => ({
+      day: b.label,
       active: fmtDuration(b.activeSeconds),
       count: b.count,
     }));
@@ -172,6 +196,8 @@ export function useHeartbeatStats(heartbeats: Heartbeat[], thresholdSec: number)
       noActivityWarning: totalActive === 0,
       buckets,
       bucketRows,
+      dailyBuckets,
+      dailyBucketRows,
       langItems,
       editorItems,
       projectItems,

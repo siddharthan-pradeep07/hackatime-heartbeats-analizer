@@ -35,3 +35,10 @@ export function fmtCompact(n: number): string {
   if (n >= 1e4) return (n / 1e3).toFixed(1) + "K";
   return Math.round(n).toLocaleString();
 }
+
+const MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** Short calendar-day label, e.g. "Sep 2". */
+export function fmtDayLabel(date: Date): string {
+  return `${MONTH_ABBR[date.getMonth()]} ${date.getDate()}`;
+}

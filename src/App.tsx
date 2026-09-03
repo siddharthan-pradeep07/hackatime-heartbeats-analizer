@@ -8,6 +8,7 @@ import { BarList } from "./components/charts/BarList";
 import { StackedBar } from "./components/charts/StackedBar";
 import { Meter } from "./components/charts/Meter";
 import { PulseStrip } from "./components/charts/PulseStrip";
+import { DailyActivityChart } from "./components/charts/DailyActivityChart";
 import { DataTable } from "./components/DataTable";
 import { AuthenticityCard } from "./components/AuthenticityCard";
 import { HackClubBanner } from "./components/HackClubBanner";
@@ -15,11 +16,24 @@ import { Footer } from "./components/Footer";
 import { TooltipProvider } from "./components/charts/Tooltip";
 import { normalizeHeartbeats } from "./lib/normalize";
 import { fmtDuration } from "./lib/format";
-import { breakdownRows, useHeartbeatStats, type BreakdownRow, type BucketRow, type SessionRow } from "./hooks/useHeartbeatStats";
+import {
+  breakdownRows,
+  useHeartbeatStats,
+  type BreakdownRow,
+  type BucketRow,
+  type DailyBucketRow,
+  type SessionRow,
+} from "./hooks/useHeartbeatStats";
 import type { DatasetMeta, FileStat, Heartbeat, TableColumn } from "./types";
 
 const BUCKET_COLUMNS: TableColumn<BucketRow>[] = [
   { key: "range", label: "Elapsed time" },
+  { key: "active", label: "Active time", mono: true },
+  { key: "count", label: "Heartbeats", align: "right", mono: true },
+];
+
+const DAILY_COLUMNS: TableColumn<DailyBucketRow>[] = [
+  { key: "day", label: "Day" },
   { key: "active", label: "Active time", mono: true },
   { key: "count", label: "Heartbeats", align: "right", mono: true },
 ];
@@ -104,6 +118,15 @@ export default function App() {
                   table={{ columns: BUCKET_COLUMNS, rows: stats.bucketRows }}
                 >
                   <PulseStrip buckets={stats.buckets} />
+                </ChartCard>
+
+                <ChartCard
+                  title="Active hours per day"
+                  subtitle="Every day across the whole timeline, including days with no activity"
+                  className="span-2"
+                  table={{ columns: DAILY_COLUMNS, rows: stats.dailyBucketRows }}
+                >
+                  <DailyActivityChart buckets={stats.dailyBuckets} />
                 </ChartCard>
 
                 <ChartCard

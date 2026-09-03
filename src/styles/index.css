@@ -251,6 +251,8 @@ figcaption .cap-sub { font-size: 0.76rem; color: var(--muted); display: block; m
 .axis-label { fill: var(--muted); font: 500 10px ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace; }
 .pulse-bar { fill: var(--series-1); transition: fill .12s; cursor: pointer; }
 .pulse-bar:hover, .pulse-bar:focus { fill: var(--hc-orange); outline: none; }
+.daily-bar { fill: var(--series-4); transition: fill .12s; cursor: pointer; }
+.daily-bar:hover, .daily-bar:focus { fill: var(--hc-cyan); outline: none; }
 
 /* ---- Tables ---- */
 .table-wrap { overflow-x: auto; }

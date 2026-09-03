@@ -4,8 +4,11 @@ import type { Heartbeat } from "../types";
  * Accepts a bare array of heartbeats, a `{ heartbeats: [...] }` wrapper, or any
  * object whose first array-of-objects property looks like one. Tolerates `t`
  * (seconds since the first heartbeat) or `time`/`timestamp` (a Unix timestamp,
- * converted to relative seconds) as the time field, and fills in sensible
- * defaults for missing/null fields.
+ * converted to relative seconds — the original epoch is kept as `absMs` so
+ * real calendar days can be recovered) as the time field, and fills in
+ * sensible defaults for missing/null fields. An optional `clicks` field is
+ * carried through as-is if present, though it isn't part of the standard
+ * Hackatime/WakaTime heartbeat format.
  */
 export function normalizeHeartbeats(raw: unknown): Heartbeat[] {
   const arr = findHeartbeatArray(raw);
@@ -23,6 +26,9 @@ export function normalizeHeartbeats(raw: unknown): Heartbeat[] {
     .filter((v): v is number => v !== null);
   const minTime = Math.min(...rawTimes);
   const looksAbsolute = timeKey !== "t" || minTime > 1e6;
+  // Epoch values above ~1e12 are already milliseconds (WakaTime/Hackatime's own
+  // convention is fractional Unix seconds, but tolerate both).
+  const isMillisEpoch = minTime > 1e12;
 
   const out: Heartbeat[] = [];
   for (const hbRaw of arr) {
@@ -30,6 +36,7 @@ export function normalizeHeartbeats(raw: unknown): Heartbeat[] {
     const t = hbRaw[timeKey] as number;
     out.push({
       t: looksAbsolute ? t - minTime : t,
+      absMs: looksAbsolute ? (isMillisEpoch ? t : t * 1000) : undefined,
       write: !!hbRaw.write,
       project: strOr(hbRaw.project, "Unnamed project"),
       file: strOr(hbRaw.file, "(untitled)"),
@@ -38,6 +45,7 @@ export function normalizeHeartbeats(raw: unknown): Heartbeat[] {
       editor: strOr(hbRaw.editor, "Unknown editor"),
       lines: typeof hbRaw.lines === "number" ? hbRaw.lines : null,
       sourceType: strOr(hbRaw.sourceType, "unknown"),
+      clicks: typeof hbRaw.clicks === "number" ? hbRaw.clicks : undefined,
     });
   }
   out.sort((a, b) => a.t - b.t);
