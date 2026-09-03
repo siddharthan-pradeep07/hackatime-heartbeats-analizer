@@ -5,6 +5,11 @@ dist-ssr
 *.tsbuildinfo
 artifact-build.html
 
+# Real (and any locally-added) heartbeat exports used to calibrate
+# src/lib/authenticity.ts — never committed, since they're someone's actual
+# coding activity data. scripts/eval-authenticity.mts itself is still tracked.
+scripts/fixtures/
+
 # Editor
 .vscode/*
 !.vscode/extensions.json
